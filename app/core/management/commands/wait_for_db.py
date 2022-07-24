@@ -1,7 +1,6 @@
 """"
 Danjo command to wait for the database to be available
 """
-from email.policy import default
 import time
 
 from psycopg2 import OperationalError as Psycopg2OpError
