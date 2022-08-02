@@ -21,7 +21,7 @@ def create_user(email='user@example.com', password='testpass123'):
     return get_user_model().objects.create_user(email=email, password=password)
 
 
-class PublicIngridientsApiTests(TestCase):
+class PublicIngredientsApiTests(TestCase):
     """Test unauthenticated API requests."""
 
     def setUp(self):
@@ -34,8 +34,8 @@ class PublicIngridientsApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
-class PrivateIngredientApiTests(TestCase):
-    """Test unaunthenticated API requests."""
+class PrivateIngredientsApiTests(TestCase):
+    """Test authenticated API requests."""
 
     def setUp(self):
         self.user = create_user()
@@ -45,7 +45,7 @@ class PrivateIngredientApiTests(TestCase):
     def test_retrieve_ingredients(self):
         """Test retrieving a list of ingredients."""
         Ingredient.objects.create(user=self.user, name='Kale')
-        Ingredient.objects.create(user=self.user, name='Vanila')
+        Ingredient.objects.create(user=self.user, name='Vanilla')
 
         res = self.client.get(INGREDIENTS_URL)
 
@@ -58,7 +58,7 @@ class PrivateIngredientApiTests(TestCase):
         """Test list of ingredients is limited to authenticated user."""
         user2 = create_user(email='user2@example.com')
         Ingredient.objects.create(user=user2, name='Salt')
-        ingredient = Ingredient.objects.create(user=self.user, name='Papper')
+        ingredient = Ingredient.objects.create(user=self.user, name='Pepper')
 
         res = self.client.get(INGREDIENTS_URL)
 

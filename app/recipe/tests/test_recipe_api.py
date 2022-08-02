@@ -2,7 +2,6 @@
 Tests for recipe APIs.
 """
 from decimal import Decimal
-from genericpath import exists
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -69,7 +68,7 @@ class PrivateRecipeApiTests(TestCase):
         self.user = create_user(email='user@example.com', password='test123')
         self.client.force_authenticate(self.user)
 
-    def test_retrive_recipes(self):
+    def test_retrieve_recipes(self):
         """Test retrieving a list of recipes."""
         create_recipe(user=self.user)
         create_recipe(user=self.user)
@@ -83,8 +82,8 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_recipe_list_limited_to_user(self):
         """Test list of recipes is limited to authenticated user."""
-        other_user = create_user(
-            email='other@example.com', password='password123')
+        other_user = create_user(email='other@example.com', password='test123')
+
         create_recipe(user=other_user)
         create_recipe(user=self.user)
 
@@ -135,7 +134,7 @@ class PrivateRecipeApiTests(TestCase):
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         recipe.refresh_from_db()
-        self.assertAlmostEqual(recipe.title, payload['title'])
+        self.assertEqual(recipe.title, payload['title'])
         self.assertEqual(recipe.link, original_link)
         self.assertEqual(recipe.user, self.user)
 
@@ -144,7 +143,7 @@ class PrivateRecipeApiTests(TestCase):
         recipe = create_recipe(
             user=self.user,
             title='Sample recipe title',
-            link='https://example.com/recipe.pdf',
+            link='https://exmaple.com/recipe.pdf',
             description='Sample recipe description.',
         )
 
@@ -198,12 +197,12 @@ class PrivateRecipeApiTests(TestCase):
         self.assertTrue(Recipe.objects.filter(id=recipe.id).exists())
 
     def test_create_recipe_with_new_tags(self):
-        """Test creating a recipe with tags."""
+        """Test creating a recipe with new tags."""
         payload = {
             'title': 'Thai Prawn Curry',
             'time_minutes': 30,
             'price': Decimal('2.50'),
-            'tags': [{'name': 'Thai'}, {'name': 'Dinner'}]
+            'tags': [{'name': 'Thai'}, {'name': 'Dinner'}],
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
@@ -226,7 +225,7 @@ class PrivateRecipeApiTests(TestCase):
             'title': 'Pongal',
             'time_minutes': 60,
             'price': Decimal('4.50'),
-            'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}]
+            'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}],
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
@@ -244,7 +243,7 @@ class PrivateRecipeApiTests(TestCase):
             self.assertTrue(exists)
 
     def test_create_tag_on_update(self):
-        """Test creating tag when updating a recipe."""
+        """Test create tag when updating a recipe."""
         recipe = create_recipe(user=self.user)
 
         payload = {'tags': [{'name': 'Lunch'}]}
@@ -258,7 +257,7 @@ class PrivateRecipeApiTests(TestCase):
     def test_update_recipe_assign_tag(self):
         """Test assigning an existing tag when updating a recipe."""
         tag_breakfast = Tag.objects.create(user=self.user, name='Breakfast')
-        recipe = create_recipe(self.user)
+        recipe = create_recipe(user=self.user)
         recipe.tags.add(tag_breakfast)
 
         tag_lunch = Tag.objects.create(user=self.user, name='Lunch')
