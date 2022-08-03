@@ -2,7 +2,6 @@
 Tests for the tags API.
 """
 from decimal import Decimal
-from turtle import title
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
