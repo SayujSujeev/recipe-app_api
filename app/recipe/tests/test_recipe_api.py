@@ -382,7 +382,7 @@ class PrivateRecipeApiTests(TestCase):
         self.assertEqual(recipe.ingredients.count(), 0)
 
     def test_filter_by_tags(self):
-        """Test filtering recipes by tag."""
+        """Test filtering recipes by tags."""
         r1 = create_recipe(user=self.user, title='Thai Vegetable Curry')
         r2 = create_recipe(user=self.user, title='Aubergine with Tahini')
         tag1 = Tag.objects.create(user=self.user, name='Vegan')
@@ -403,15 +403,15 @@ class PrivateRecipeApiTests(TestCase):
 
     def test_filter_by_ingredients(self):
         """Test filtering recipes by ingredients."""
-        r1 = create_recipe(user=self.user, title='Posh Beans and Toast')
+        r1 = create_recipe(user=self.user, title='Posh Beans on Toast')
         r2 = create_recipe(user=self.user, title='Chicken Cacciatore')
-        in1 = Ingredient.objects.create(user=self.user, name='Fata Cheese')
+        in1 = Ingredient.objects.create(user=self.user, name='Feta Cheese')
         in2 = Ingredient.objects.create(user=self.user, name='Chicken')
         r1.ingredients.add(in1)
         r2.ingredients.add(in2)
         r3 = create_recipe(user=self.user, title='Red Lentil Daal')
 
-        params = {'ingredients': 'f{in1.id},{in2.id}'}
+        params = {'ingredients': f'{in1.id},{in2.id}'}
         res = self.client.get(RECIPES_URL, params)
 
         s1 = RecipeSerializer(r1)
@@ -438,7 +438,7 @@ class ImageUploadTests(TestCase):
         self.recipe.image.delete()
 
     def test_upload_image(self):
-        """Test uploading an image te a recipe."""
+        """Test uploading an image to a recipe."""
         url = image_upload_url(self.recipe.id)
         with tempfile.NamedTemporaryFile(suffix='.jpg') as image_file:
             img = Image.new('RGB', (10, 10))
