@@ -1,7 +1,6 @@
 """
 Database models.
 """
-from distutils.command.upload import upload
 import uuid
 import os
 
